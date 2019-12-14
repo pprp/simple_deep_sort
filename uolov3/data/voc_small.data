@@ -1,0 +1,6 @@
+classes=1
+train=./data/trainval.txt
+valid=./data/test.txt
+names=/home/dongpeijie/deep_sort_pytorch-master/uolov3/data/voc_small.names
+backup=backup/
+eval=coco
