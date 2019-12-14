@@ -63,10 +63,10 @@ class InferYOLOv3(object):
                                       ori_img.shape).round()
 
             # Print results to screen
-            # print('%gx%g ' % resized_img.shape[2:], end='')  # print image size
-            # for c in det[:, -1].unique():
-            #     n = (det[:, -1] == c).sum()
-                # print('%g %ss' % (n, self.class_names[int(c)]), end=', ')
+            print('%gx%g ' % resized_img.shape[2:], end='')  # print image size
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()
+                print('%g %ss' % (n, self.class_names[int(c)]), end=', ')
 
             resized_img = np.array(resized_img.cpu())
             # Draw bounding boxes and labels of detections

@@ -12,7 +12,6 @@ from util import COLORS_10, draw_bboxes
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-
 class Detector(object):
     def __init__(self, args):
         self.args = args
@@ -57,7 +56,9 @@ class Detector(object):
             print(exc_type, exc_value, exc_traceback)
 
     def detect(self):
+        frame_cnt = -1
         while self.vdo.grab():
+            frame_cnt += 1
             start = time.time()
             _, ori_im = self.vdo.retrieve()
             # im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
@@ -86,10 +87,11 @@ class Detector(object):
             t2_end = time.time()
 
             end = time.time()
-            print("det:%.4f|sort:%.4f|total:%.4f|det p:%.2f%%|fps:%.2f" %
-                  ((t1_end - t1_begin), (t2_end - t2_begin), (end - start),
-                   ((t1_end - t1_begin)*100 / ((end - start))),
-                   (1 / (end - start))))
+            print(
+                "frame:%d|det:%.4f|sort:%.4f|total:%.4f|det p:%.2f%%|fps:%.2f"
+                % (frame_cnt, (t1_end - t1_begin), (t2_end - t2_begin),
+                   (end - start), ((t1_end - t1_begin) * 100 /
+                                   ((end - start))), (1 / (end - start))))
             if self.args.display:
                 cv2.imshow("test", ori_im)
                 cv2.waitKey(1)
@@ -103,10 +105,10 @@ def parse_args():
     parser.add_argument("VIDEO_PATH", type=str)
     parser.add_argument("--yolo_cfg",
                         type=str,
-                        default="uolov3/cfg/yolov3-1cls-d2.cfg")
+                        default="uolov3/cfg/yolov3-1cls-d1.cfg")
     parser.add_argument("--yolo_weights",
                         type=str,
-                        default="uolov3/weights/yolov3-1cls-d2.pt")
+                        default="uolov3/weights/yolov3-1cls-d1.pt")
     parser.add_argument("--yolo_names",
                         type=str,
                         default="YOLOv3/cfg/coco.names")
@@ -134,3 +136,6 @@ if __name__ == "__main__":
     args = parse_args()
     with Detector(args) as det:
         det.detect()
+
+    os.system("ffmpeg -y -i demo.avi -r 10 -b:a 32k %s_output.mp4" %
+              (os.path.basename(args.VIDEO_PATH).split('.')[0]))

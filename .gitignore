@@ -1,4 +1,11 @@
+# Folders
+__pycache__/
 
-*.pyc
-*.jpg
+
+# Files
 *.weights
+*.t7
+*.mp4
+*.avi
+*.jpg
+*.json
