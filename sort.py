@@ -21,12 +21,6 @@ class Detector(object):
         device = torch.device(
             'cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.vdo = cv2.VideoCapture()
-        # self.yolo3 = YOLOv3(args.yolo_cfg,
-        #                     args.yolo_weights,
-        #                     args.yolo_names,
-        #                     is_xywh=True,
-        #                     conf_thresh=args.conf_thresh,
-        #                     nms_thresh=args.nms_thresh)
         self.yolo3 = InferYOLOv3(args.yolo_cfg,
                                  args.img_size,
                                  args.yolo_weights,
