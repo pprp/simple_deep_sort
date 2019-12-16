@@ -9,10 +9,8 @@ from uolov3.inferYOLO import InferYOLOv3
 from uolov3.utils.utils import xyxy2xywh
 from deep_sort import DeepSort
 from util import COLORS_10, draw_bboxes
-from sort.sort import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
 
 class Detector(object):
     def __init__(self, args):
@@ -30,8 +28,7 @@ class Detector(object):
                                  device,
                                  conf_thres=args.conf_thresh,
                                  nms_thres=args.nms_thresh)
-        # self.deepsort = DeepSort(args.deepsort_checkpoint)
-        self.mot_tracker_sort = Sort()
+        self.deepsort = DeepSort(args.deepsort_checkpoint)
         self.class_names = self.yolo3.class_names
 
     def __enter__(self):
@@ -74,23 +71,9 @@ class Detector(object):
                 # bbox_xxyy[:, 3:] *= 1.2
                 # cls_conf = cls_conf[mask]
 
-                # bbox_xcycwh = bbox_xxyy
-                # print(" "*10, bbox_xcycwh.shape, cls_conf.shape)
-                detections = []
-                for i in range(len(bbox_xxyy)):
-                    # print(bbox_xxyy[i][0].item(), bbox_xxyy[i][1].item(),
-                    #       bbox_xxyy[i][2].item(), bbox_xxyy[i][3].item(),
-                    #       cls_conf[i].tolist())
-                    detections.append([
-                        bbox_xxyy[i][0].item(), bbox_xxyy[i][1].item(),
-                        bbox_xxyy[i][2].item(), bbox_xxyy[i][3].item(),
-                        cls_conf[i].tolist()
-                    ])
-                    # detections.append([*bbox_xcycwh[i].tolist(), cls_conf[i].tolist()])
-                    # print("=" * 30, [*bbox_xcycwh[i], cls_conf[i]])
-                # print('-'*30, detections)
-                detections = torch.tensor(detections)
-                outputs = self.mot_tracker_sort.update(detections)
+                bbox_xcycwh = xyxy2xywh(bbox_xxyy)
+                outputs = self.deepsort.update(bbox_xcycwh, cls_conf, im)
+
                 if len(outputs) > 0:
                     bbox_xyxy = outputs[:, :4]
                     identities = outputs[:, -1]
