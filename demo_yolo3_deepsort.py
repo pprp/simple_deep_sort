@@ -52,7 +52,7 @@ class Detector(object):
             im = ori_im
             # print(im.shape, '='*30)
             bbox_xcycwh, cls_conf, cls_ids = self.yolo3(im)
-            print("bbox_xcycwh:", bbox_xcycwh, "img shape:", im.shape)
+            # print("bbox_xcycwh:", bbox_xcycwh, "img shape:", im.shape)
             # print(bbox_xcycwh.shape, cls_conf.shape, cls_ids.shape)
             if bbox_xcycwh is not None:
                 # select class person cow
